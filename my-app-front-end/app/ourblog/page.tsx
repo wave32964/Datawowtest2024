@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import BlogPostList from "@/components/blog-post-list";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
   Dialog,
   DialogContent,
@@ -30,8 +31,8 @@ import {
   Search,
   ArrowLeft,
 } from "lucide-react";
-import { useMediaQuery } from "./hook/use-mobile";
-import { CreatePostModal } from "@/components/create-post-modal";
+import { useMediaQuery } from "../hook/use-mobile";
+
 // Sample post data - in a real app, this would come from an API or database
 const posts = [
   {
@@ -88,6 +89,25 @@ const posts = [
   },
 ];
 
+// Sample comments
+const sampleComments = [
+  {
+    id: "1",
+    author: "Wittawat98",
+    avatar: "/placeholder.svg?height=32&width=32",
+    content:
+      "Lorem ipsum dolor sit amet consectetur. Purus cursus vel est a pretium quam imperdiet. Tristique auctor sed semper nibh odio lacuis sed aliquet. Amet mollis eget morbi feugiat mi risus eu. Tortor sed sagittis convallis auctor.",
+    timeAgo: "12h ago",
+  },
+  {
+    id: "2",
+    author: "Hawaii51",
+    avatar: "/placeholder.svg?height=32&width=32",
+    content:
+      "Lorem ipsum dolor sit amet consectetur. Purus cursus vel est a pretium quam imperdiet. Tristique auctor sed semper nibh odio lacuis sed aliquet. Amet mollis eget morbi feugiat mi risus eu. Tortor sed sagittis convallis auctor.",
+    timeAgo: "1mo. ago",
+  },
+];
 
 export default function HomePage() {
   const router = useRouter();
@@ -95,19 +115,23 @@ export default function HomePage() {
   const [selectedPost, setSelectedPost] = useState<(typeof posts)[0] | null>(
     null
   );
+  const [username, setUsername] = useState<string>("");
   const [comment, setComment] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false)
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const filteredPosts = posts.filter(post => post.author === username);
   useEffect(() => {
     // Check if the user is authenticated by checking for auth_token in localStorage
     const token = localStorage.getItem("auth_token");
+    const storedUsername = localStorage.getItem("username");
 
-    if (token) {
-      // If token exists, mark as authenticated
+    if (token && storedUsername) {
+      // If token exists and username is found, mark as authenticated
       setIsAuthenticated(true);
+      setUsername(storedUsername); // Set the username from localStorage
     } else {
-      // If no token, redirect to login
+      // If no token or username, redirect to login
       router.push("/login");
     }
   }, [router]);
@@ -200,7 +224,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <BlogPostList posts={posts} onPostClick={handlePostClick} />
+            <BlogPostList posts={filteredPosts} onPostClick={handlePostClick} />
 
             {/* Mobile Post Detail Modal */}
             <Dialog  open={!!selectedPost && isMobile} onOpenChange={(open) => !open && setSelectedPost(null)}>
@@ -235,10 +259,12 @@ export default function HomePage() {
     )}
   </DialogContent>
 </Dialog>
-<CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
           </main>
         </div>
+
       </div>
+
     );
   }
 

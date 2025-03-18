@@ -3,17 +3,32 @@
 import { useRouter } from "next/navigation"; // Import useRouter hook
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react"; // Import useState
 
 export default function Login() {
   const router = useRouter(); // Get the router instance
+  const [username, setUsername] = useState(""); // State for username
+
+  // Handle username input change
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value); // Update state with the username
+  };
 
   const handleLogin = () => {
-    // Simulate authentication, set an auth token in localStorage
+    // Check if username is not empty
+    if (username.trim() === "") {
+      alert("Please enter your username");
+      return;
+    }
+
+    // Simulate authentication, set an auth token and username in localStorage
     localStorage.setItem("auth_token", "authenticated-token");
+    localStorage.setItem("username", username); // Save username
 
     // After login, redirect to the home page
     router.push("/"); // Redirect to home page after successful login
   };
+
 
   return (
     // <div className="min-h-screen bg-green-500 flex overflow-hidden ">
@@ -66,6 +81,7 @@ export default function Login() {
             id="username"
             type="text"
             placeholder="Username"
+            onChange={handleUsernameChange} // Handle change for username
             className="bg-white w-full p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5a9e6f] focus:border-[#5a9e6f] placeholder:text-gray-500"
           />
           <Button

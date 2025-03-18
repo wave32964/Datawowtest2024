@@ -1,13 +1,13 @@
-"use client"
-import React from 'react' // Add this import
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Header from "@/components/header"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Home, FileText, MessageSquare } from "lucide-react"
+"use client";
+import React from "react"; // Add this import
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "@/components/header";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Home, FileText, MessageSquare } from "lucide-react";
 
 // Sample post data - in a real app, this would come from an API or database
 const posts = [
@@ -55,7 +55,7 @@ const posts = [
     comments: 15,
     timeAgo: "2mo. ago",
   },
-]
+];
 
 // Sample comments
 const sampleComments = [
@@ -83,35 +83,35 @@ const sampleComments = [
       "Lorem ipsum dolor sit amet consectetur. Purus cursus vel est a pretium quam imperdiet. Tristique auctor sed semper nibh odio lacuis sed aliquet.",
     timeAgo: "3mo. ago",
   },
-]
+];
 type PostDetailProps = {
-    params: Promise<{ id: string }>; 
-  };
-  
-  export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
-    const params = React.use(paramsPromise)
-  const router = useRouter()
-  const [comment, setComment] = useState("")
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  params: Promise<{ id: string }>;
+};
+
+export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
+  const params = React.use(paramsPromise);
+  const router = useRouter();
+  const [comment, setComment] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Find the post with the matching ID
-  const post = posts.find((p) => p.id === params.id) || posts[0]
+  const post = posts.find((p) => p.id === params.id) || posts[0];
 
   useEffect(() => {
     // Check if the user is authenticated
-    const token = localStorage.getItem("auth_token")
+    const token = localStorage.getItem("auth_token");
     if (token) {
-      setIsAuthenticated(true)
+      setIsAuthenticated(true);
     } else {
-      router.push("/login")
+      router.push("/login");
     }
-  }, [router])
+  }, [router]);
 
   const handlePostComment = () => {
     // Handle posting comment logic here
-    console.log("Posted comment:", comment)
-    setComment("")
-  }
+    console.log("Posted comment:", comment);
+    setComment("");
+  };
 
   if (!isAuthenticated) {
     return (
@@ -121,7 +121,7 @@ type PostDetailProps = {
           <p>Redirecting to login page...</p>
         </div>
       </header>
-    )
+    );
   }
 
   return (
@@ -132,11 +132,17 @@ type PostDetailProps = {
         {/* Sidebar */}
         <aside className="w-64 bg-slate-200 p-4 hidden md:block">
           <nav className="space-y-4">
-            <Link href="/" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-slate-700 hover:text-slate-900"
+            >
               <Home className="h-5 w-5" />
               <span>Home</span>
             </Link>
-            <Link href="/" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+            <Link
+              href="/ourblog"
+              className="flex items-center gap-2 text-slate-700 hover:text-slate-900"
+            >
               <FileText className="h-5 w-5" />
               <span>Our Blog</span>
             </Link>
@@ -144,9 +150,16 @@ type PostDetailProps = {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 bg-white p-4 md:p-6 md:mr-60">
+        <main className="flex-1 bg-white p-4 md:p-6 ">
           {/* Back button */}
-          <Link href="/" className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 mb-4">
+          <Link
+            href="#"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent default behavior of the link
+              router.back(); // Go back to the previous page
+            }}
+            className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 mb-4"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Link>
 
@@ -174,7 +187,9 @@ type PostDetailProps = {
             </div>
 
             {/* Post title - only visible on desktop */}
-            <h1 className="text-2xl font-bold mb-4 hidden md:block">{post.title}</h1>
+            <h1 className="text-2xl font-bold mb-4 hidden md:block">
+              {post.title}
+            </h1>
 
             {/* Post content - only visible on desktop */}
             <div className="prose mb-6 hidden md:block">
@@ -184,7 +199,7 @@ type PostDetailProps = {
             </div>
 
             {/* Comment count - only visible on desktop */}
-            <div className="flex items-center text-slate-500 text-sm mb-6 hidden md:block">
+            <div className=" items-center text-slate-500 text-sm mb-6 hidden md:block">
               <MessageSquare className="h-4 w-4 mr-1" />
               <span>{post.comments} Comments</span>
             </div>
@@ -192,7 +207,9 @@ type PostDetailProps = {
             {/* Comment form */}
             <div className="mb-6">
               <div className="border rounded-md p-4 md:p-0 md:border-0">
-                <h3 className="text-lg font-medium mb-2 md:hidden">Add Comments</h3>
+                <h3 className="text-lg font-medium mb-2 md:hidden">
+                  Add Comments
+                </h3>
                 <Textarea
                   placeholder="What's on your mind..."
                   value={comment}
@@ -203,7 +220,10 @@ type PostDetailProps = {
                   <Button variant="outline" className="flex-1">
                     Cancel
                   </Button>
-                  <Button onClick={handlePostComment} className="flex-1 bg-[#5a9e6f] hover:bg-[#4a8e5f] text-white">
+                  <Button
+                    onClick={handlePostComment}
+                    className="flex-1 bg-[#5a9e6f] hover:bg-[#4a8e5f] text-white"
+                  >
                     Post
                   </Button>
                 </div>
@@ -213,7 +233,12 @@ type PostDetailProps = {
             {/* Comments */}
             <div className="space-y-6">
               {sampleComments.map((comment, index) => (
-                <div key={comment.id} className={`flex gap-3 ${index === 2 ? "hidden md:flex" : ""}`}>
+                <div
+                  key={comment.id}
+                  className={`flex gap-3 ${
+                    index === 2 ? "hidden md:flex" : ""
+                  }`}
+                >
                   <Avatar className="h-8 w-8 mt-1">
                     <AvatarImage src={comment.avatar} alt={comment.author} />
                     <AvatarFallback>{comment.author[0]}</AvatarFallback>
@@ -221,9 +246,13 @@ type PostDetailProps = {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{comment.author}</span>
-                      <span className="text-xs text-slate-500">{comment.timeAgo}</span>
+                      <span className="text-xs text-slate-500">
+                        {comment.timeAgo}
+                      </span>
                     </div>
-                    <p className="text-sm text-slate-700 mt-1">{comment.content}</p>
+                    <p className="text-sm text-slate-700 mt-1">
+                      {comment.content}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -232,6 +261,5 @@ type PostDetailProps = {
         </main>
       </div>
     </div>
-  )
+  );
 }
-
