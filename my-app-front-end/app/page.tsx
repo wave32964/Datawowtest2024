@@ -124,7 +124,7 @@ export default function HomePage() {
 
   const handlePostComment = () => {
     // Handle posting comment logic here
-    console.log("Posted comment:", comment);
+ 
     setComment("");
   };
 
