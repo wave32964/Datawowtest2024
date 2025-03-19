@@ -3,7 +3,7 @@ import BlogPostCard from "./blog-post-card";
 
 interface BlogPostListProps {
   posts: {
-    id: string;
+    id: number;
     author: string;
     avatar: string;
     category: string;
@@ -12,7 +12,7 @@ interface BlogPostListProps {
     content:string;
     comments: number;
   }[];
-  onPostClick: (postId: string) => void;
+  onPostClick: (postId: number) => void;
 }
 
 

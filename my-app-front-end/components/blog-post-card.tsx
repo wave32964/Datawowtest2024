@@ -10,7 +10,7 @@ import { CreatePostModal } from "./create-post-modal";
 import { useState } from "react";
 interface BlogPostCardProps {
   post: {
-    id: string;
+    id: number;
     author: string;
     avatar: string;
     category: string;

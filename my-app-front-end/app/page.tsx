@@ -32,71 +32,26 @@ import {
 } from "lucide-react";
 import { useMediaQuery } from "./hook/use-mobile";
 import { CreatePostModal } from "@/components/create-post-modal";
-// Sample post data - in a real app, this would come from an API or database
-const posts = [
-  {
-    id: "1",
-    author: "Wittawat",
-    avatar: "/placeholder.svg?height=40&width=40",
-    category: "History",
-    title: "The Beginning of the End of the World",
-    excerpt:
-      "The afterlife sitcom The Good Place comes to its culmination, the show's two protagonists, Eleanor and Chidi, contemplate their future. Having lived thousands upon thousands of lifetimes together, and having experienced virtually everything this life has to offer...",
-    content:
-      "The afterlife sitcom The Good Place comes to its culmination, the show's two protagonists, Eleanor and Chidi, contemplate their future. Having lived thousands upon thousands of lifetimes together, and having experienced virtually everything this life has to offer, they decide it's time to walk through the door that leads to true finality. The show's message is that even paradise becomes meaningless without the possibility of an ending.",
-    comments: 32,
-    timeAgo: "5mo. ago",
-  },
-  {
-    id: "2",
-    author: "Zach",
-    avatar: "/placeholder.svg?height=40&width=40",
-    category: "History",
-    title: "The Big Short War",
-    excerpt:
-      'Tall, athletic, handsome with cerulean eyes, he was the kind of hyper-ambitious kid other kids loved to hate and just the type to make a big wager with no margin for error. But on the night before the S.A.T., his father took pity on him and canceled the bet. "I would\'ve..."',
-    content:
-      'Tall, athletic, handsome with cerulean eyes, he was the kind of hyper-ambitious kid other kids loved to hate and just the type to make a big wager with no margin for error. But on the night before the S.A.T., his father took pity on him and canceled the bet. "I would\'ve lost it."\n\n"Admit it," his father said. "You didn\'t study." "One wrong on the verbal," Wes said. "One wrong on the math," Tim mused. "I\'m still convinced some of the questions were wrong."',
-    comments: 4,
-    timeAgo: "5mo. ago",
-  },
-  {
-    id: "3",
-    author: "Nicholas",
-    avatar: "/placeholder.svg?height=40&width=40",
-    category: "Exercise",
-    title: "The Mental Health Benefits of Exercise",
-    excerpt:
-      "You already know that exercise is good for your body. But did you know it can also boost your mood, improve your sleep, and help you deal with depression, anxiety, stress, and more?",
-    content:
-      "You already know that exercise is good for your body. But did you know it can also boost your mood, improve your sleep, and help you deal with depression, anxiety, stress, and more?\n\nResearch shows that exercise is as effective as antidepressants in some cases and that maintaining an exercise schedule can prevent you from relapsing. Exercise is a powerful tool for people with depression, ADHD, anxiety, and more. It promotes all kinds of changes in the brain, including neural growth, reduced inflammation, and new activity patterns that promote feelings of calm and well-being.",
-    comments: 32,
-    timeAgo: "3mo. ago",
-  },
-  {
-    id: "4",
-    author: "Carl",
-    avatar: "/placeholder.svg?height=40&width=40",
-    category: "History",
-    title: "What Makes a Man Betray His Country?",
-    excerpt:
-      "The life of Adolf Tolkachev, Soviet dissident and CIA spy. Excerpted from The Billion Dollar Spy: A True Story of Cold War Espionage",
-    content:
-      "The life of Adolf Tolkachev, Soviet dissident and CIA spy. Excerpted from The Billion Dollar Spy: A True Story of Cold War Espionage.\n\nIn 1977, Adolf Tolkachev, a Russian engineer who worked in a military aviation institute, began passing secrets to the CIA about Soviet radar and avionics systems. His espionage career lasted nearly a decade and provided the United States with information that saved billions in defense spending. What drove him to betray his country? Not money, though the CIA paid him millions of rubles. It was revenge: The Soviet system had destroyed his wife's parents during Stalin's Great Terror.",
-    comments: 0,
-    timeAgo: "2mo. ago",
-  },
-];
-
+import { createBlog, Blog, getBlogs } from "@/utils/api"; // Import getBlogs to fetch posts
 
 export default function HomePage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<(typeof posts)[0] | null>(
-    null
-  );
+  const [selectedPost, setSelectedPost] = useState<Blog | null>(null);
+  const [newPost, setNewPost] = useState<Blog>({
+    id: 1, // Leave ID empty initially
+    title: "",
+    category: "",
+    content: "",
+    author: "Anonymous",
+    avatar: "/placeholder.svg?height=40&width=40",
+    excerpt: "",
+    comments: 0,
+    timeAgo: "Just now",
+  });
   const [comment, setComment] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [posts, setPosts] = useState<Blog[]>([]); // Initialize state to store blog posts
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
@@ -112,7 +67,21 @@ export default function HomePage() {
     }
   }, [router]);
 
-  const handlePostClick = (postId: string) => {
+  useEffect(() => {
+    // Fetch the blog posts when the component mounts
+    const fetchBlogs = async () => {
+      try {
+        const fetchedBlogs = await getBlogs(); // Fetch blog posts using the getBlogs function
+        setPosts(fetchedBlogs); // Update the posts state with the fetched data
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
+    };
+
+    fetchBlogs(); // Call the function to fetch the blogs
+  }, []);
+
+  const handlePostClick = (postId: number) => {
     if (isMobile) {
       // When on mobile, we can set the selected post based on its id
       const post = posts.find(p => p.id === postId); // Find the full post object based on the id
@@ -126,6 +95,11 @@ export default function HomePage() {
     // Handle posting comment logic here
     console.log("Posted comment:", comment);
     setComment("");
+  };
+
+  const handlePostCreation = (newPost: Blog) => {
+    // Update posts state with the new post to trigger re-render
+    setPosts((prevPosts) => [...prevPosts, newPost]);
   };
 
   if (isAuthenticated) {
@@ -235,7 +209,7 @@ export default function HomePage() {
     )}
   </DialogContent>
 </Dialog>
-<CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+<CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onPostCreated={handlePostCreation} />
           </main>
         </div>
       </div>
