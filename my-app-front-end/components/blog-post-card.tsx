@@ -18,28 +18,31 @@ interface BlogPostCardProps {
     excerpt: string;
     comments: number;
     content: string;
+    timeAgo: string
   };
   onClick: () => void;
-  onDelete?: () => void; // Optional onDelete function for delete button
-  onEdit?: () => void; // Optional onEdit function for edit button
+  onDeleteSuccess: () => void;
+  onUpdateSuccess: () => void; 
 }
 
 const BlogPostCard = ({
   post,
   onClick,
-  onDelete,
-  onEdit,
+  onDeleteSuccess,
+  onUpdateSuccess
 }: BlogPostCardProps) => {
   const pathname = usePathname(); // Get the current pathname
     const [isEditModalOpen,setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
-    const [postContent, setPostContent] = useState(post.content);
+    const [postContent, setPostContent] = useState(post);
     const handleEditSubmit = (newContent: string) =>{
-        setPostContent(newContent)
+        setPostContent(post)
     }
 const handleDelete=()=>{
     setIsDeleteModalOpen(false)
 }
+
+
   // Check if on the "/ourblog" page
   const isOurBlogPage = pathname === "/ourblog";
   return (
@@ -85,21 +88,22 @@ const handleDelete=()=>{
           </span>
 
           <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-          <p className="text-slate-600 mb-3 line-clamp-2">{post.excerpt}</p>
+          <p className="text-slate-600 mb-3 line-clamp-2">{post.content}</p>
 
-          {post.comments > 0 && (
+  
             <div className="flex items-center text-slate-500 text-sm">
                 <div className="cursor-pointer" onClick={onClick}>
               <MessageSquare  className="h-4 w-4 mr-1" />
               </div>
-              <span>{post.comments} Comments</span>
+              {post.comments > 0 && (
+              <span>{post.comments} Comments</span>      )}
             </div>
-          )}
+    
 
           {/* Conditionally render Edit and Delete buttons */}
         </div>
-        <DeletePostModal isOpen={isDeleteModalOpen} onClose={()=>setIsDeleteModalOpen(false)} onDelete={handleDelete}/>
-        <EditPostModal isOpen={isEditModalOpen} onClose={()=>setIsEditModalOpen(false)} onSubmit={handleEditSubmit} initialContent={postContent}/>
+        <DeletePostModal isOpen={isDeleteModalOpen} onClose={()=>setIsDeleteModalOpen(false)} onDelete={handleDelete}     onDeleteSuccess={onDeleteSuccess} itemId={post.id}/>
+        <EditPostModal isOpen={isEditModalOpen} onClose={()=>setIsEditModalOpen(false)} onSubmit={handleEditSubmit}  onUpdateSuccess={onUpdateSuccess} itemId={post.id}  post={post}/>
       </div>
 
 

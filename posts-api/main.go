@@ -3,35 +3,41 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"posts-api/db"
 	"posts-api/handlers"
-	"posts-api/models"
-	"sync"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 )
 
-var blogs []models.Blog
-var mu sync.Mutex
-var currentID int = 0
-
 func main() {
-	// Initialize some example blog data
-	blogs = []models.Blog{
-		{ID: 1, Author: "John Doe", Avatar: "/avatar1.jpg", Category: "Tech", Title: "First Blog Post", Excerpt: "This is the first post", Comments: 5, Content: "This is the content of the first post.", TimeAgo: "2 hours ago"},
-		{ID: 2, Author: "Jane Doe", Avatar: "/avatar2.jpg", Category: "Health", Title: "Health Tips", Excerpt: "This is a blog about health", Comments: 2, Content: "Content about health.", TimeAgo: "1 hour ago"},
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file:", err)
+	} else {
+		log.Println("Successfully loaded .env file")
 	}
-	currentID = 2 // Set to the highest ID in the initial data
+	// Debug: print environment variables
+	log.Println("DB_USER:", os.Getenv("DB_USER"))
+	log.Println("DB_NAME:", os.Getenv("DB_NAME"))
+	log.Println("DB_PASSWORD:", os.Getenv("DB_PASSWORD"))
 
+	// Initialize the database
+	db.InitDB() // Make sure this matches the function name in db package
 	r := mux.NewRouter()
 
-	// Register routes with handlers that use the shared blogs slice
-	r.HandleFunc("/blogs", handlers.CreateBlog(&blogs, &currentID)).Methods("POST")
-	r.HandleFunc("/blogs", handlers.GetBlog(&blogs)).Methods("GET")
-	r.HandleFunc("/blogs/{id}", handlers.GetBlog(&blogs)).Methods("GET")
-	r.HandleFunc("/blogs/{id}", handlers.DeleteBlog(&blogs)).Methods("DELETE") // DELETE route
-	r.HandleFunc("/blogs/{id}", handlers.UpdateBlog(&blogs)).Methods("PUT")    // PUT route
+	// Register routes with handlers that interact with the database
+	r.HandleFunc("/blogs", handlers.CreateBlog()).Methods("POST")
+	r.HandleFunc("/blogs", handlers.GetBlog()).Methods("GET")
+	r.HandleFunc("/blogs/{id}", handlers.GetBlog()).Methods("GET")
+	r.HandleFunc("/blogs/{id}", handlers.DeleteBlog()).Methods("DELETE") // DELETE route
+	r.HandleFunc("/blogs/{id}", handlers.UpdateBlog()).Methods("PUT")    // PUT route
+	r.HandleFunc("/blogs/comments", handlers.CreateComment()).Methods("POST")
+	r.HandleFunc("/blogs/{id}/comments", handlers.GetComments()).Methods("GET")
 
+	// Set up CORS middleware to allow cross-origin requests
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},

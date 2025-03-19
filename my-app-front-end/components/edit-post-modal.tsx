@@ -8,19 +8,36 @@ interface EditPostModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (content: string) => void
-  initialContent: string
+  itemId: number
+  post:Post
+  onUpdateSuccess?: () => void
 }
 
-export function EditPostModal({ isOpen, onClose, onSubmit, initialContent }: EditPostModalProps) {
-  const [content, setContent] = useState(initialContent)
+interface Post {
+    id: number;
+    author: string;
+    avatar: string;
+    category: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    comments: number;
+    timeAgo: string; // You can adjust this field as needed
+  }
+
+export function EditPostModal({ isOpen, onClose, onSubmit,post,itemId,onUpdateSuccess}: EditPostModalProps) {
+  const [content, setContent] = useState("")
 
   const handleSubmit = () => {
     onSubmit(content)
+  
     onClose()
   }
 
+
+
   return (
-    <Modal title="Edit Post" isOpen={isOpen} onClose={onClose} onConfirm={handleSubmit} variant="edit">
+    <Modal title="Edit Post" isOpen={isOpen} itemId={itemId} post={post} initialContent={content} onClose={onClose} onUpdateSuccess={onUpdateSuccess} variant="edit">
       <div className="py-4">
         <Textarea
           value={content}
