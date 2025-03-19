@@ -85,10 +85,7 @@ export default function HomePage() {
       setIsSearchFocused(false);
     };
   
-    // Handle search input change
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value); // Update the search term
-    };
+
   useEffect(() => {
     // Check if the user is authenticated by checking for auth_token in localStorage
     const token = localStorage.getItem("auth_token");
@@ -96,10 +93,9 @@ export default function HomePage() {
     if (token) {
       // If token exists, mark as authenticated
       setIsAuthenticated(true);
-    } else {
-      // If no token, redirect to login
-      router.push("/login");
-    }
+    } 
+  
+
   }, [router]);
 
   useEffect(() => {
@@ -137,13 +133,13 @@ export default function HomePage() {
     setPosts((prevPosts) => [...prevPosts, newPost]);
   };
 
-  if (isAuthenticated) {
+
     return (
       <div className="min-h-screen flex flex-col">
         <Header isAuthenticated={isAuthenticated} />
-        <div className="flex flex-1 bg-slate-200">
+        <div className="flex flex-1 bg-grey-100">
           {/* Sidebar */}
-          <aside className="w-64 bg-slate-200 p-4 hidden md:block">
+          <aside className="w-64 bg-grey-100 p-4 hidden md:block">
             <nav className="space-y-4">
               <Link
                 href="/"
@@ -283,12 +279,5 @@ export default function HomePage() {
     );
   }
 
-  return (
-    <header className="bg-gray-800 p-4">
-      <div>
-        <h1>Landing Page</h1>
-        <p>Redirecting to login page...</p>
-      </div>
-    </header>
-  );
-}
+
+

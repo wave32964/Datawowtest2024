@@ -49,7 +49,7 @@ export default function Header({ isAuthenticated }: HeaderProps) {
             >
               {/* Sheet Title for Drawer */}
               <SheetTitle className="text-lg font-bold text-white mt-5 ml-7">
-                <ArrowRight />
+              <ArrowRight onClick={() => setIsDrawerOpen(false)} />
               </SheetTitle>
 
               {/* Add your drawer content here */}

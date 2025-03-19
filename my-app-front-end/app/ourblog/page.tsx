@@ -46,7 +46,7 @@ export default function OurBlogPage() {
   const [shouldRefetch, setShouldRefetch] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
   const isMobile = useMediaQuery("(max-width: 768px)");
-
+  const [isSearchFocused, setIsSearchFocused] = useState(false); // Track if search input is focused
   const handlePostCreation = (newPost: Blog) => {
     setPosts((prevPosts) => [...prevPosts, newPost]);
     setShouldRefetch(true); // Trigger re-fetch to ensure consistency with backend
@@ -59,6 +59,16 @@ export default function OurBlogPage() {
     setShouldRefetch(true); // Trigger re-fetch
   };
 
+      // Handle when the search input is focused
+      const handleSearchFocus = () => {
+        setIsSearchFocused(true);
+      };
+    
+      // Handle when the search input is blurred
+      const handleSearchBlur = () => {
+        setIsSearchFocused(false);
+      };
+    
   // Fetch authentication data
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -70,8 +80,11 @@ export default function OurBlogPage() {
     } else {
       setIsAuthenticated(false);
       setUsername("");
+
+      // If not authenticated, redirect to login page
+      router.push("/login");
     }
-  }, []);
+  }, [router]); // Ensure useRouter is used inside useEffect
 
   // Fetch posts
   useEffect(() => {
@@ -126,8 +139,8 @@ export default function OurBlogPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header isAuthenticated={isAuthenticated} />
-      <div className="flex flex-1 bg-slate-200">
-        <aside className="w-64 bg-slate-200 p-4 hidden md:block">
+      <div className="flex flex-1 bg-grey-100">
+        <aside className="w-64 bg-grey-100 p-4 hidden md:block">
           <nav className="space-y-4">
             <Link
               href="/"
@@ -152,10 +165,12 @@ export default function OurBlogPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="search"
+                onFocus={handleSearchFocus}
                 placeholder="Search"
                 className="pl-10 bg-slate-100 border-slate-200"
               />
             </div>
+            {!(isMobile && isSearchFocused) && (
             <div className="flex items-center gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-2">
@@ -190,6 +205,7 @@ export default function OurBlogPage() {
                 Create <Plus className="h-4 w-4" />
               </Button>
             </div>
+            )}
           </div>
 
           <BlogPostList
