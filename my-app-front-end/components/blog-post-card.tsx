@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { EditPostModal } from "./edit-post-modal";
 import { DeletePostModal } from "./delete-post-modal";
 import { CreatePostModal } from "./create-post-modal";
-import { useState } from "react";
+import { useState,useEffect} from "react";
 interface BlogPostCardProps {
   post: {
     id: number;
@@ -21,8 +21,8 @@ interface BlogPostCardProps {
     timeAgo: string
   };
   onClick: () => void;
-  onDeleteSuccess: () => void;
-  onUpdateSuccess: () => void; 
+  onDeleteSuccess?: () => void;
+  onUpdateSuccess?: () => void; 
 }
 
 const BlogPostCard = ({
@@ -35,6 +35,7 @@ const BlogPostCard = ({
     const [isEditModalOpen,setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
     const [postContent, setPostContent] = useState(post);
+    const [comments, setComments] = useState<any[]>([]); // Added state for comments
     const handleEditSubmit = (newContent: string) =>{
         setPostContent(post)
     }
@@ -42,6 +43,49 @@ const handleDelete=()=>{
     setIsDeleteModalOpen(false)
 }
 
+useEffect(() => {
+    if (post.id) {
+      const fetchComments = async () => {
+        try {
+  
+          const response = await fetch(`http://localhost:8080/blogs/${post.id}/comments`);
+          if (!response) {
+            console.error("No response received from server.");
+            setComments([]);
+            return;
+          }
+
+          if (response.status === 404 || response.status === 204) {
+            console.log("No comments yet for this blog post.");
+            setComments([]);
+            return;
+          }
+
+          if (!response.ok) {
+            console.error("Failed to fetch comments. Status:", response.status);
+            setComments([]);
+            return;
+          }
+
+          const data = await response.json();
+          if (data && Array.isArray(data)) {
+            setComments(data);
+          } else {
+            console.log("No comments yet for this blog post.");
+            setComments([]);
+          }
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+          setComments([]);
+        }
+      };
+
+      fetchComments();
+    }
+  }, [post.id]);
+
+  // Number of comments is now available as comments.length
+  const commentCount = comments.length;
 
   // Check if on the "/ourblog" page
   const isOurBlogPage = pathname === "/ourblog";
@@ -91,12 +135,12 @@ const handleDelete=()=>{
           <p className="text-slate-600 mb-3 line-clamp-2">{post.content}</p>
 
   
-            <div className="flex items-center text-slate-500 text-sm">
-                <div className="cursor-pointer" onClick={onClick}>
+            <div className="flex items-center text-slate-500 text-sm cursor-pointer" onClick={onClick}>
+                <div >
               <MessageSquare  className="h-4 w-4 mr-1" />
               </div>
-              {post.comments > 0 && (
-              <span>{post.comments} Comments</span>      )}
+           
+              <span>{commentCount} Comments</span>    
             </div>
     
 
