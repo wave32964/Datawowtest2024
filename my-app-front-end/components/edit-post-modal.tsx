@@ -99,30 +99,35 @@ export function EditPostModal({
         <div className="p-4 flex flex-col gap-4">
           {/* Editable Dropdown for Category */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-center font-bold md:w-[120px] md:text-left text-success">
-                {category || "Select Category"}
-                <span className="ml-2">
-                  <ChevronDown className="text-success" />
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline" className="w-full justify-center font-bold md:w-[120px] md:text-left">
+        {/* Apply text-success to the selected category */}
+        <span className={category ? "text-success" : "text-black"}>
+          {category || "Select Category"}
+        </span>
+        <span className="ml-2">
+          <ChevronDown className="text-success" />
+        </span>
+      </Button>
+    </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="w-full min-w-[200px]">
-              {communities.map((community) => (
-                <DropdownMenuItem
-                  key={community.id}
-                  onClick={() => setCategory(community.name)}
-                  className="flex items-center justify-between bg-white text-success hover:text-green-600"
-                >
-                  <p className="text-success">{community.name}</p>
-                  {category.toLowerCase() === community.name.toLowerCase() && (
-                    <Check className="h-4 w-4 text-success" />
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <DropdownMenuContent className="w-full min-w-[200px]">
+      {communities.map((community) => (
+        <DropdownMenuItem
+          key={community.id}
+          onClick={() => setCategory(community.name)}
+          className="flex items-center justify-between bg-white hover:text-green-600"
+        >
+          <p className="text-black">
+            {community.name}
+          </p>
+          {category.toLowerCase() === community.name.toLowerCase() && (
+            <Check className="h-4 w-4 text-black" />
+          )}
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
 
           {title && (
             <div className="mb-4">
