@@ -114,13 +114,13 @@ export default function HomePage() {
   }, []);
 
   const handlePostClick = (postId: number) => {
-    if (isMobile) {
-      // When on mobile, we can set the selected post based on its id
-      const post = posts.find((p) => p.id === postId); // Find the full post object based on the id
-      setSelectedPost(post || null);
-    } else {
+    // if (isMobile) {
+    //   // When on mobile, we can set the selected post based on its id
+    //   const post = posts.find((p) => p.id === postId); // Find the full post object based on the id
+    //   setSelectedPost(post || null);
+    // } else {
       router.push(`/posts/${postId}`); // Use the postId for navigation
-    }
+    // }
   };
   const OnCommentSuccess = () =>{
     console.log("Comment Success")
