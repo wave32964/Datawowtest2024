@@ -18,8 +18,13 @@ func InitDB() {
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
+	port := os.Getenv("DB_PORT")
+	if port == "" {
+		port = "5432" // Default to 5432 if no port is provided
+	}
+	connStr := "postgres://" + dbUser + ":" + dbPassword + "@localhost:" + port + "/" + dbName + "?sslmode=disable"
+
 	// Construct the connection string
-	connStr := "postgres://" + dbUser + ":" + dbPassword + "@localhost/" + dbName + "?sslmode=disable"
 	DB, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error opening database connection: ", err)

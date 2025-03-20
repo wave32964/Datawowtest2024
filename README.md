@@ -2,7 +2,22 @@
 --go as backend
 --nextjs frontednd framework
 --postgresql as db
+# set up postgresql
+<!-- This section explains how to set up the database -->
+$ brew install postgresql
+$ psql -U postgres
+# create your db
+CREATE DATABASE datawowtest2024;
+CREATE USER your_username WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE datawowtest2024 TO your_username;
 
+# create env.
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=datawowtest2024
 
 # to run app 
 $ cd posts-api
