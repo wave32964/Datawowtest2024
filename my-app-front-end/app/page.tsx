@@ -205,20 +205,18 @@ export default function HomePage() {
           <main className="flex-1 p-4 md:mr-60 ">
       
             <div className="flex items-center justify-between mb-6">
-              <div className="relative w-full max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  type="search"
-                  placeholder="Search"
-                  className="pl-10 border-slate-200"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}            
-                  onFocus={handleSearchFocus} // Set focused state to true when search is focused
-                  onBlur={handleSearchBlur} // Set focused state to false when search loses focus
-                />
-
-                
-              </div>
+            <div className="relative w-full md:p-7">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="search"
+                placeholder="Search"
+                className="pl-10 border-slate-200"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={handleSearchFocus} // Set focused state to true when search is focused
+                onBlur={handleSearchBlur} // Set focused state to false when search loses focus
+              />
+            </div>
               {!(isMobile && isSearchFocused) && (
               <div className="flex items-center gap-3">
         <DropdownMenu>
