@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Home, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"; // Import Dialog components
 import { Comment } from "@/app/types/type";
+
 type PostDetailProps = {
   params: Promise<{ id: string }>;
 };
@@ -30,46 +32,47 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [params, setParams] = useState<{ id: string } | null>(null);
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // Add mobile detection state
 
+  // Detect mobile screen size
   useEffect(() => {
-    // Wait for params to resolve
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed (e.g., 'md' = 768px)
+    };
+    handleResize(); // Set initial value
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Resolve params
+  useEffect(() => {
     const fetchParams = async () => {
       const resolvedParams = await paramsPromise;
       setParams(resolvedParams);
     };
-
     fetchParams();
   }, [paramsPromise]);
 
-  // Check if user is authenticated
+  // Check authentication
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      router.push("/login");
-    }
+    if (token) setIsAuthenticated(true);
+    else router.push("/login");
   }, [router]);
 
-  // Fetch blog details
+  // Fetch blog details and comments (unchanged)
   useEffect(() => {
     if (params?.id) {
-      const blogId = parseInt(params.id, 10); // Convert to integer
-
+      const blogId = parseInt(params.id, 10);
       const fetchBlog = async () => {
         try {
           const response = await fetch(`http://localhost:8080/blogs/${blogId}`);
-          if (response.ok) {
-            const blogData = await response.json();
-            setPost(blogData);
-          } else {
-            console.error("Failed to fetch blog details");
-          }
+          if (response.ok) setPost(await response.json());
+          else console.error("Failed to fetch blog details");
         } catch (error) {
           console.error("Error fetching blog details:", error);
         }
       };
-
       fetchBlog();
     }
   }, [params]);
@@ -77,85 +80,49 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
   useEffect(() => {
     if (params?.id) {
       const blogId = parseInt(params.id, 10);
-
       const fetchComments = async () => {
         try {
-          const response = await fetch(
-            `http://localhost:8080/blogs/${blogId}/comments`
-          );
-
-          if (!response) {
-            console.error("No response received from server.");
+          const response = await fetch(`http://localhost:8080/blogs/${blogId}/comments`);
+          if (!response.ok || response.status === 204) {
             setComments([]);
             return;
           }
-
-          // Handle specific status codes
-          if (response.status === 404 || response.status === 204) {
-            console.log("No comments yet for this blog post.");
-            setComments([]);
-            return;
-          }
-
-          if (!response.ok) {
-            console.error("Failed to fetch comments. Status:", response.status);
-            setComments([]);
-            return;
-          }
-
           const data = await response.json();
-
-          if (data && Array.isArray(data)) {
-            setComments(data);
-          } else {
-            console.log("No comments yet for this blog post.");
-            setComments([]);
-          }
+          setComments(Array.isArray(data) ? data : []);
         } catch (error) {
           console.error("Error fetching comments:", error);
           setComments([]);
         }
       };
-
       fetchComments();
     }
   }, [params]);
 
   const handlePostComment = async () => {
-    if (!comment.trim()) return; // Don't post empty comments
+    if (!comment.trim() || !params?.id) return;
     const username = localStorage.getItem("username");
-    const avatar = "https://example.com/avatar.jpg"; // You can also store and use a real avatar URL
-
-    if (!username) {
-      console.error("User is not logged in");
-      return;
-    }
-    const blogId = parseInt(params?.id ?? "", 10); // If params is null, use an empty string as a fallback
+    if (!username) return console.error("User is not logged in");
 
     const newComment = {
-      blog_id: blogId, // Replace this with the actual blog_id dynamically
-      author: username, // Get the username from localStorage
-      avatar: avatar, // Replace with the actual user's avatar URL (if stored)
+      blog_id: parseInt(params.id, 10),
+      author: username,
+      avatar: "https://example.com/avatar.jpg",
       content: comment,
-      timeAgo: "Just now", // You can update this as needed
+      timeAgo: "Just now",
     };
 
     try {
       const response = await fetch(`http://localhost:8080/blogs/comments`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newComment),
       });
-
       if (response.ok) {
         const createdComment = await response.json();
-        setComments((prevComments) => [createdComment, ...prevComments]); // Prepend new comment
-        setComment(""); // Clear the input field
-      } else {
-        console.error("Failed to post comment");
-      }
+        setComments((prev) => [createdComment, ...prev]);
+        setComment("");
+        setShowCommentForm(false); // Close form or dialog after posting
+      } else console.error("Failed to post comment");
     } catch (error) {
       console.error("Error posting comment:", error);
     }
@@ -164,60 +131,39 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
   if (!isAuthenticated) {
     return (
       <header className="bg-gray-800 p-4">
-        <div>
-          <h1>Post Detail</h1>
-          <p>Redirecting to login page...</p>
-        </div>
+        <h1>Post Detail</h1>
+        <p>Redirecting to login page...</p>
       </header>
     );
   }
 
-  if (!post) {
-    return <div>Loading...</div>;
-  }
+  if (!post) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header isAuthenticated={isAuthenticated} />
-
       <div className="flex flex-1 bg-slate-200">
-        {/* Sidebar */}
         <aside className="w-64 bg-grey-100 p-4 hidden md:block">
           <nav className="space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-slate-700 hover:text-slate-900"
-            >
-              <Home className="h-5 w-5" />
-              <span>Home</span>
+            <Link href="/" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+              <Home className="h-5 w-5" /> <span>Home</span>
             </Link>
-            <Link
-              href="/ourblog"
-              className="flex items-center gap-2 text-slate-700 hover:text-slate-900"
-            >
-              <FileText className="h-5 w-5" />
-              <span>Our Blog</span>
+            <Link href="/ourblog" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+              <FileText className="h-5 w-5" /> <span>Our Blog</span>
             </Link>
           </nav>
         </aside>
 
-        {/* Main content */}
         <main className="flex-1 bg-white p-4 md:p-6">
-          {/* Back button */}
           <Link
             href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              router.back();
-            }}
+            onClick={(e) => { e.preventDefault(); router.back(); }}
             className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
 
-          {/* Post content */}
           <div className="max-w-3xl mx-auto">
-            {/* Author info */}
             <div className="flex items-center gap-3 mb-4">
               <Avatar>
                 <AvatarImage src={post.avatar} alt={post.author} />
@@ -230,16 +176,18 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
               <div className="w-2 h-2 bg-green-500 rounded-full md:block hidden"></div>
             </div>
 
-            {/* Post title and content */}
-            <h1 className="text-2xl font-bold mb-4 hidden md:block">
-              {post.title}
-            </h1>
-            <div className="prose mb-6 hidden md:block">
+            <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
+            <div className="prose mb-6">
               {post.content.split("\n\n").map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
               ))}
             </div>
-            {/* Comment section */}
+            <div className="flex items-center gap-2 mb-4 text-slate-500">
+              <MessageSquare className="h-4 w-4" />
+              <span className="text-sm">{comments.length} Comments</span>
+            </div>
+
+            {/* Comment Section */}
             <div className="mb-6">
               {!showCommentForm ? (
                 <Button
@@ -249,7 +197,8 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
                 >
                   Add Comments
                 </Button>
-              ) : (
+              ) : !isMobile ? (
+                // Desktop Inline Form
                 <div className="space-y-4">
                   <Textarea
                     placeholder="What's on your mind..."
@@ -269,26 +218,60 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
                       Cancel
                     </Button>
                     <Button
-                      onClick={() => {
-                        handlePostComment();
-                        setShowCommentForm(false);
-                      }}
+                      onClick={handlePostComment}
                       className="flex-1 bg-[#5a9e6f] hover:bg-[#4a8e5f] text-white"
                     >
                       Post
                     </Button>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
-            {/* Comments count */}
-            <div className="flex items-center gap-2 mb-4  text-slate-500">
-            <MessageSquare  className="h-4 w-4 " />
-              <span className="text-sm text-slate-500">
-          
-                {comments.length} Comments
-              </span>
-            </div>
+
+            {/* Mobile Dialog */}
+            <Dialog
+              open={showCommentForm && isMobile}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setShowCommentForm(false);
+                  setComment("");
+                }
+              }}
+            >
+              <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto p-0">
+                <DialogTitle className="sr-only">Add Comment</DialogTitle>
+                {post && (
+                  <div className="border rounded-md p-4 h-[400px]">
+                    <h3 className="text-xl font-medium mb-2 mt-6">Add Comments</h3>
+                    <Textarea
+                      placeholder="What's on your mind..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="min-h-[180px] mb-4 border-dashed"
+                    />
+                    <div className="flex flex-col gap-4">
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => {
+                          setShowCommentForm(false);
+                          setComment("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handlePostComment}
+                        className="flex-1 bg-[#5a9e6f] hover:bg-[#4a8e5f] text-white"
+                      >
+                        Post
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
             {/* Render Comments */}
             <div className="space-y-6">
               {comments.map((comment) => (
@@ -300,13 +283,9 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{comment.author}</span>
-                      <span className="text-xs text-slate-500">
-                        {comment.timeAgo}
-                      </span>
+                      <span className="text-xs text-slate-500">{comment.timeAgo}</span>
                     </div>
-                    <p className="text-sm text-slate-700 mt-1">
-                      {comment.content}
-                    </p>
+                    <p className="text-sm text-slate-700 mt-1">{comment.content}</p>
                   </div>
                 </div>
               ))}
