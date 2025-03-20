@@ -119,7 +119,7 @@ useEffect(() => {
           className="flex items-center justify-between bg-white text-black  hover:text-green-600"
         >
           <p className="text-black text-bold">{community.name}</p>
-          {selectedCommunity?.id === community.id && <Check className="h-4 w-4 text-success" />}
+          {selectedCommunity?.id === community.id && <Check className="h-4 w-4 text-black" />}
         </DropdownMenuItem>
       ))}
     </DropdownMenuContent>

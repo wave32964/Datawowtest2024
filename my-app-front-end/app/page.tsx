@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/header";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -220,51 +221,57 @@ export default function HomePage() {
               </div>
               {!(isMobile && isSearchFocused) && (
               <div className="flex items-center gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 ">
-                    <h1 className="text-black">Community</h1>
-                    <ChevronDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
+        <DropdownMenu>
+  <DropdownMenuTrigger className="flex items-center gap-2">
+    <h1 className="text-black">Community</h1>
+    <ChevronDown className="h-4 w-4" />
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Food")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Food</span>
+      {selectedCategory === "Food" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Pet")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Pet</span>
+      {selectedCategory === "Pet" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Health")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Health</span>
+      {selectedCategory === "Health" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Fashion")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Fashion</span>
+      {selectedCategory === "Fashion" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Exercise")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Exercise</span>
+      {selectedCategory === "Exercise" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+    <DropdownMenuItem
+      onClick={() => setSelectedCategory("Others")}
+      className="hover:bg-gray-100 flex items-center justify-between"
+    >
+      <span>Other</span>
+      {selectedCategory === "Others" && <Check className="h-4 w-4 text-black" />}
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
 
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("History")}
-                    >
-                      <span>History</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("Food")}
-                    >
-                      <span>Food</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("Pets")}
-                    >
-                      <span>Pets</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("Fashion")}
-                    >
-                      <span>Fashion</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("Exercise")}
-                    >
-                      <span>Exercise</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-gray-100"
-                      onClick={() => setSelectedCategory("Others")}
-                    >
-                      <span>Others</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
                 <Button
                   onClick={() => setIsModalOpen(true)}
                   className="bg-success hover:bg-success text-white font-bold flex items-center gap-1"
