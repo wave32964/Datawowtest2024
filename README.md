@@ -8,6 +8,6 @@ go run main.go
 $ pnpm run dev
 [localhost](http://localhost:3000)
 
-# to update db
+# to setup db
 cd posts-api
 $ bash setup.sh

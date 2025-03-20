@@ -208,7 +208,7 @@ export default function HomePage() {
                 <Input
                   type="search"
                   placeholder="Search"
-                  className="pl-10 bg-slate-100 border-slate-200"
+                  className="pl-10 border-slate-200"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}            
                   onFocus={handleSearchFocus} // Set focused state to true when search is focused
@@ -266,7 +266,7 @@ export default function HomePage() {
                 </DropdownMenu>
                 <Button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-success hover:bg-success text-white flex items-center gap-1"
+                  className="bg-success hover:bg-success text-white font-bold flex items-center gap-1"
                 >
                   Create <Plus className="h-4 w-4" />
                 </Button>

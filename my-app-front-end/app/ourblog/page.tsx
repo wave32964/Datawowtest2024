@@ -206,7 +206,7 @@ export default function OurBlogPage() {
                 type="search"
                 onFocus={handleSearchFocus}
                 placeholder="Search"
-                className="pl-10 bg-slate-100 border-slate-200"
+                className="pl-10  border-slate-200"
               />
             </div>
             {!(isMobile && isSearchFocused) && (
@@ -239,9 +239,9 @@ export default function OurBlogPage() {
                 </DropdownMenu>
                 <Button
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-success hover:bg-success text-white flex items-center gap-1"
+                  className="bg-success hover:bg-success text-white font-bold flex items-center gap-1"
                 >
-                  Create <Plus className="h-4 w-4" />
+                  Create <Plus className="h-1 w-1" />
                 </Button>
               </div>
             )}

@@ -1,31 +1,41 @@
-"use client"; // Add this line to mark the file as a client-side component
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useRouter } from "next/navigation"; // Import useRouter hook
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useMediaQuery } from "@/app/hook/use-mobile"; // Hook to detect mobile screens
+import { useMediaQuery } from "@/app/hook/use-mobile";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
-} from "@/components/ui/sheet"; // Import SheetTitle from Radix UI
-import { ArrowRight, AxeIcon,House, MenuIcon,FilePenLine, TvIcon } from "lucide-react";
+} from "@/components/ui/sheet";
+import { ArrowRight, House, MenuIcon, FilePenLine } from "lucide-react";
 
 type HeaderProps = {
-  isAuthenticated: boolean; // Define the type for `token`
+  isAuthenticated: boolean;
 };
 
 export default function Header({ isAuthenticated }: HeaderProps) {
-  const router = useRouter(); // Get the router instance
-  const isMobile = useMediaQuery("(max-width: 768px)"); // Detect mobile screen size
+  const router = useRouter();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [userInitial, setUserInitial] = useState(""); // State for user's first letter
+
+  // Check localStorage for username when component mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      const username = localStorage.getItem("username");
+      if (username && username.length > 0) {
+        setUserInitial(username.charAt(0).toUpperCase()); // Get first letter and capitalize it
+      }
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = () => {
-    router.push("/login"); // Redirect to login page when button is clicked
+    router.push("/login");
   };
-
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State to manage drawer visibility
 
   return (
     <header className="py-3 bg-green-500">
@@ -34,7 +44,6 @@ export default function Header({ isAuthenticated }: HeaderProps) {
           a Board
         </p>
 
-        {/* If on mobile, show the drawer button */}
         {isMobile ? (
           <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <SheetTrigger asChild>
@@ -47,39 +56,34 @@ export default function Header({ isAuthenticated }: HeaderProps) {
               side="right"
               className="bg-[#2d4739] text-white p-0 w-[280px]"
             >
-              {/* Sheet Title for Drawer */}
               <SheetTitle className="text-lg font-bold text-white mt-5 ml-7">
-              <ArrowRight onClick={() => setIsDrawerOpen(false)} />
+                <ArrowRight onClick={() => setIsDrawerOpen(false)} />
               </SheetTitle>
 
-              {/* Add your drawer content here */}
               <div className="flex flex-col space-y-4 ml-7 mt-5 ">
                 <Link href="/" passHref>
-                <div className="flex items-center gap-3">
-                <House /> Home
-                </div>
+                  <div className="flex items-center gap-3">
+                    <House /> Home
+                  </div>
                 </Link>
-
-                {/* Our Blog Link */}
                 <Link href="/ourblog" passHref>
-                <div className="flex items-center gap-3">
-                <FilePenLine /> Our blog
-                </div>
+                  <div className="flex items-center gap-3">
+                    <FilePenLine /> Our blog
+                  </div>
                 </Link>
               </div>
             </SheetContent>
           </Sheet>
         ) : (
-          // Non-mobile (desktop) view will show the login button or avatar
           <div className="mr-[20px] flex items-center">
             {isAuthenticated ? (
               <div className="w-8 h-8 bg-gray-200 rounded-full cursor-pointer flex items-center justify-center">
                 <Avatar>
                   <AvatarImage
                     src="/placeholder.svg?height=40&width=40"
-                    alt="Wittawat"
+                    alt="User avatar"
                   />
-                  <AvatarFallback>W</AvatarFallback>
+                  <AvatarFallback>{userInitial || "U"}</AvatarFallback>
                 </Avatar>
               </div>
             ) : (
