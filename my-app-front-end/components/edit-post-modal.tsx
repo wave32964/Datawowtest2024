@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
-
+import { Post } from "@/app/types/type";
 interface EditPostModalProps {
   isOpen: boolean
   onClose: () => void
@@ -15,18 +15,6 @@ interface EditPostModalProps {
   itemId: number
   post: Post
   onUpdateSuccess?: () => void
-}
-
-interface Post {
-  id: number
-  author: string
-  avatar: string
-  category: string
-  title: string
-  excerpt: string
-  content: string
-  comments: number
-  timeAgo: string
 }
 
 type Community = {

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Home, FileText } from "lucide-react";
-
+import { Comment } from "@/app/types/type";
 type PostDetailProps = {
   params: Promise<{ id: string }>;
 };
@@ -21,14 +21,7 @@ type Blog = {
   timeAgo: string;
 };
 
-type Comment = {
-  id: number;
-  blog_id: number;
-  author: string;
-  avatar: string;
-  content: string;
-  timeAgo: string;
-};
+
 
 export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
 

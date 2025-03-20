@@ -8,6 +8,7 @@ import { EditPostModal } from "./edit-post-modal";
 import { DeletePostModal } from "./delete-post-modal";
 import { CreatePostModal } from "./create-post-modal";
 import { useState,useEffect} from "react";
+import { Comment } from "@/app/types/type";
 interface BlogPostCardProps {
   post: {
     id: number;
@@ -35,7 +36,7 @@ const BlogPostCard = ({
     const [isEditModalOpen,setIsEditModalOpen] = useState(false)
     const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false)
     const [postContent, setPostContent] = useState(post);
-    const [comments, setComments] = useState<any[]>([]); // Added state for comments
+    const [comments, setComments] = useState<Comment[]>([]); // Added state for comments
     const handleEditSubmit = (newContent: string) =>{
         setPostContent(post)
     }

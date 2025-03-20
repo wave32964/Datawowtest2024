@@ -11,6 +11,7 @@ import BlogPostList from "@/components/blog-post-list";
 import { Input } from "@/components/ui/input";
 import { createBlog, Blog, getBlogs } from "@/utils/api";
 import { Textarea } from "@/components/ui/textarea";
+import {Post} from "../types/type"
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ import {
 } from "lucide-react";
 import { useMediaQuery } from "../hook/use-mobile";
 
+
 export default function OurBlogPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,7 +46,7 @@ export default function OurBlogPage() {
   const [comment, setComment] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shouldRefetch, setShouldRefetch] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isSearchFocused, setIsSearchFocused] = useState(false); // Track if search input is focused
   const handlePostCreation = (newPost: Blog) => {
@@ -98,7 +100,7 @@ export default function OurBlogPage() {
         }
         const postsData = await response.json();
         const filteredPosts = postsData.filter(
-          (post: any) => post.author === username
+          (post : Post) => post.author === username
         );
         setPosts(filteredPosts); // Update posts state
       } catch (error) {
