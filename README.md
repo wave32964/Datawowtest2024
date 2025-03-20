@@ -1,13 +1,13 @@
 # Datawowtest2024
 
 # to run backend 
-cd posts-api
+$ cd posts-api
 go run main.go
 
 # to run frontend
-pnpm run dev
+$ pnpm run dev
 [localhost](http://localhost:3000)
 
 # to update db
 cd posts-api
-bash test.sh
+$ bash setup.sh
