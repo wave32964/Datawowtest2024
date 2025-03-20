@@ -24,13 +24,16 @@ interface BlogPostCardProps {
   onClick: () => void;
   onDeleteSuccess?: () => void;
   onUpdateSuccess?: () => void; 
+  onCommentSuccess?: () => void;  // Add onCommentSuccess prop here
+  
 }
 
 const BlogPostCard = ({
   post,
   onClick,
   onDeleteSuccess,
-  onUpdateSuccess
+  onUpdateSuccess,
+  onCommentSuccess,
 }: BlogPostCardProps) => {
   const pathname = usePathname(); // Get the current pathname
     const [isEditModalOpen,setIsEditModalOpen] = useState(false)
@@ -43,6 +46,7 @@ const BlogPostCard = ({
 const handleDelete=()=>{
     setIsDeleteModalOpen(false)
 }
+
 
 useEffect(() => {
     if (post.id) {
@@ -83,7 +87,7 @@ useEffect(() => {
 
       fetchComments();
     }
-  }, [post.id]);
+  }, [post.id,onCommentSuccess]);
 
   // Number of comments is now available as comments.length
   const commentCount = comments.length;

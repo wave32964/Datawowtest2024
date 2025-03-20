@@ -54,6 +54,7 @@ export default function HomePage() {
   });
   const [comment, setComment] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]); // Add comments state
   const [posts, setPosts] = useState<Blog[]>([]); // Initialize state to store blog posts
   const isMobile = useMediaQuery("(max-width: 768px)");
   // Filter posts based on the search term only if the searchTerm is 2 characters or more
@@ -121,13 +122,53 @@ export default function HomePage() {
       router.push(`/posts/${postId}`); // Use the postId for navigation
     }
   };
+  const OnCommentSuccess = () =>{
+    console.log("Comment Success")
+  }
 
-  const handlePostComment = () => {
-    // Handle posting comment logic here
- 
-    setComment("");
+
+  const handlePostComment = async () => {
+    if (!comment.trim() || !selectedPost) return; // Don't post empty comments or if no post is selected
+
+    const username = localStorage.getItem("username");
+    const avatar = "https://example.com/avatar.jpg"; // Replace with actual avatar URL if available
+
+    if (!username) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    const newComment = {
+      blog_id: selectedPost.id, // Use the selected post's ID
+      author: username,
+      avatar: avatar,
+      content: comment,
+      timeAgo: "Just now", // This can be updated on the backend
+    };
+
+    try {
+      const response = await fetch(`http://localhost:8080/blogs/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newComment),
+      });
+
+      if (response.ok) {
+        const createdComment = await response.json();
+        setComments((prevComments) => [createdComment, ...prevComments]); // Add new comment to state
+        setComment(""); // Clear the input field
+        setSelectedPost(null);
+        OnCommentSuccess()
+        
+      } else {
+        console.error("Failed to post comment");
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
   };
-
   const handlePostCreation = (newPost: Blog) => {
     // Update posts state with the new post to trigger re-render
     setPosts((prevPosts) => [...prevPosts, newPost]);
@@ -233,7 +274,7 @@ export default function HomePage() {
          )}
             </div>     
 
-            <BlogPostList posts={filteredPosts} onPostClick={handlePostClick} />
+            <BlogPostList posts={filteredPosts} onPostClick={handlePostClick} onCommentSuccess={OnCommentSuccess} />
 
             {/* Mobile Post Detail Modal */}
             <Dialog

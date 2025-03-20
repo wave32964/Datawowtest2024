@@ -16,15 +16,16 @@ interface BlogPostListProps {
   onPostClick: (postId: number) => void;
   onDeleteSuccess?: () => void; // Callback when a post is deleted
   onUpdateSuccess?: () => void; // Callback when a post is updated
+  onCommentSuccess?: () => void;  // Add onCommentSuccess prop
 }
 
 
-const BlogPostList: React.FC<BlogPostListProps> = ({ posts, onPostClick , onDeleteSuccess, onUpdateSuccess}) => {
+const BlogPostList: React.FC<BlogPostListProps> = ({ posts, onPostClick , onDeleteSuccess, onUpdateSuccess,  onCommentSuccess, }) => {
   return (
     <div className="bg-white rounded-2xl">
       {posts.map((post, index) => (
         <div key={post.id}>
-          <BlogPostCard post={post}   onUpdateSuccess={onUpdateSuccess}   onDeleteSuccess={onDeleteSuccess}  onClick={() => onPostClick(post.id)} />
+          <BlogPostCard post={post}   onUpdateSuccess={onUpdateSuccess} onCommentSuccess={onCommentSuccess}   onDeleteSuccess={onDeleteSuccess}  onClick={() => onPostClick(post.id)} />
           {index < posts.length - 1 && (
             <div className="w-full h-px bg-gray-300 my-4"></div>
           )}

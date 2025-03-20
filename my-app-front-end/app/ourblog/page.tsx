@@ -11,7 +11,7 @@ import BlogPostList from "@/components/blog-post-list";
 import { Input } from "@/components/ui/input";
 import { createBlog, Blog, getBlogs } from "@/utils/api";
 import { Textarea } from "@/components/ui/textarea";
-import {Post} from "../types/type"
+import { Post } from "../types/type";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +35,6 @@ import {
 } from "lucide-react";
 import { useMediaQuery } from "../hook/use-mobile";
 
-
 export default function OurBlogPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,6 +43,7 @@ export default function OurBlogPage() {
   );
   const [username, setUsername] = useState<string>("");
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<Comment[]>([]); // Add comments state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shouldRefetch, setShouldRefetch] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -61,16 +61,15 @@ export default function OurBlogPage() {
     setShouldRefetch(true); // Trigger re-fetch
   };
 
-      // Handle when the search input is focused
-      const handleSearchFocus = () => {
-        setIsSearchFocused(true);
-      };
-    
-      // Handle when the search input is blurred
-      const handleSearchBlur = () => {
-        setIsSearchFocused(false);
-      };
-    
+  // Handle when the search input is focused
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  const OnCommentSuccess = () =>{
+    console.log("Comment Success")
+  }
+
   // Fetch authentication data
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -100,7 +99,7 @@ export default function OurBlogPage() {
         }
         const postsData = await response.json();
         const filteredPosts = postsData.filter(
-          (post : Post) => post.author === username
+          (post: Post) => post.author === username
         );
         setPosts(filteredPosts); // Update posts state
       } catch (error) {
@@ -122,9 +121,47 @@ export default function OurBlogPage() {
     }
   };
 
-  const handlePostComment = () => {
-    console.log("Posted comment:", comment);
-    setComment("");
+  const handlePostComment = async () => {
+    if (!comment.trim() || !selectedPost) return; // Don't post empty comments or if no post is selected
+
+    const username = localStorage.getItem("username");
+    const avatar = "https://example.com/avatar.jpg"; // Replace with actual avatar URL if available
+
+    if (!username) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    const newComment = {
+      blog_id: selectedPost.id, // Use the selected post's ID
+      author: username,
+      avatar: avatar,
+      content: comment,
+      timeAgo: "Just now", // This can be updated on the backend
+    };
+
+    try {
+      const response = await fetch(`http://localhost:8080/blogs/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newComment),
+      });
+
+      if (response.ok) {
+        const createdComment = await response.json();
+        setComments((prevComments) => [createdComment, ...prevComments]); // Add new comment to state
+        setComment(""); // Clear the input field
+        setSelectedPost(null);
+        OnCommentSuccess()
+        
+      } else {
+        console.error("Failed to post comment");
+      }
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
   };
 
   if (!isAuthenticated) {
@@ -173,40 +210,40 @@ export default function OurBlogPage() {
               />
             </div>
             {!(isMobile && isSearchFocused) && (
-            <div className="flex items-center gap-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2">
-                  <h1 className="text-black">Community</h1>
-                  <ChevronDown className="h-4 w-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Food</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Pet</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Health</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Fashion</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Exercise</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="hover:bg-gray-100">
-                    <span>Other</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-success hover:bg-success text-white flex items-center gap-1"
-              >
-                Create <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+              <div className="flex items-center gap-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-2">
+                    <h1 className="text-black">Community</h1>
+                    <ChevronDown className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Food</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Pet</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Health</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Fashion</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Exercise</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-gray-100">
+                      <span>Other</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button
+                  onClick={() => setIsModalOpen(true)}
+                  className="bg-success hover:bg-success text-white flex items-center gap-1"
+                >
+                  Create <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             )}
           </div>
 
@@ -215,6 +252,7 @@ export default function OurBlogPage() {
             onUpdateSuccess={onUpdateSuccess}
             posts={posts}
             onPostClick={handlePostClick}
+            onCommentSuccess={OnCommentSuccess}
           />
 
           <Dialog
@@ -225,7 +263,7 @@ export default function OurBlogPage() {
               <DialogTitle className="sr-only">Add Comment</DialogTitle>
               {selectedPost && (
                 <div className="border rounded-md p-4">
-                  <h3 className="text-xl font-medium mb-2">Add Comments</h3>
+                  <h3 className="text-xl font-medium mb-2">Add Comments </h3>
                   <Textarea
                     placeholder="What's on your mind..."
                     value={comment}
