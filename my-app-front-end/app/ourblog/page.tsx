@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { createBlog, Blog, getBlogs } from "@/utils/api";
 import { Textarea } from "@/components/ui/textarea";
 import { Post } from "../types/type";
+import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -72,6 +73,9 @@ export default function OurBlogPage() {
     console.log("Comment Success")
   }
 
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+  };
   const filteredPosts = posts.filter((post) => {
     // Check if the search term is at least 2 characters
     
@@ -231,40 +235,98 @@ export default function OurBlogPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={handleSearchFocus} // Set focused state to true when search is focused
-              
+                onBlur={handleSearchBlur} // Set focused state to false when search loses focus
               />
             </div>
             {!(isMobile && isSearchFocused) && (
               <div className="flex items-center gap-3">
-      <DropdownMenu>
-  <DropdownMenuTrigger className="flex items-center gap-2">
-    <h1 className="text-black">Community</h1>
-    <ChevronDown className="h-4 w-4" />
-  </DropdownMenuTrigger>
-  <DropdownMenuContent>
-  <DropdownMenuItem onClick={() => setSelectedCategory("History")} className="hover:bg-gray-100">
-      <span>History</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Food")} className="hover:bg-gray-100">
-      <span>Food</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Pet")} className="hover:bg-gray-100">
-      <span>Pet</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Health")} className="hover:bg-gray-100">
-      <span>Health</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Fashion")} className="hover:bg-gray-100">
-      <span>Fashion</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Exercise")} className="hover:bg-gray-100">
-      <span>Exercise</span>
-    </DropdownMenuItem>
-    <DropdownMenuItem onClick={() => setSelectedCategory("Others")} className="hover:bg-gray-100">
-      <span>Other</span>
-    </DropdownMenuItem>
-  </DropdownMenuContent>
-</DropdownMenu>
+               <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-2">
+                    <h1 className="text-black">Community</h1>
+                    <ChevronDown className="h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Food")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Food"
+                          ? "bg-green-100"
+                          : ""
+                      }`}
+                    >
+                      <span>Food</span>
+                      {selectedCategory === "Food" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Pet")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Pet"
+                          ? "bg-green-100"
+                          : ""
+                      }`}
+                    >
+                      <span>Pet</span>
+                      {selectedCategory === "Pet" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Health")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Health"
+                          ? "bg-green-100"
+                          : ""
+                      }`}
+                    >
+                      <span>Health</span>
+                      {selectedCategory === "Health" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Fashion")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Fashion"
+                          ? "bg-green-100"
+                          : ""
+                      }`}
+                    >
+                      <span>Fashion</span>
+                      {selectedCategory === "Fashion" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Exercise")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Exercise"
+                          ? "bg-green-100 "
+                          : ""
+                      }`}
+                    >
+                      <span>Exercise</span>
+                      {selectedCategory === "Exercise" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSelectedCategory("Others")}
+                      className={`hover:bg-gray-100 flex items-center justify-between ${
+                        selectedCategory === "Others"
+                          ? "bg-green-100 "
+                          : ""
+                      }`}
+                    >
+                      <span>Other</span>
+                      {selectedCategory === "Others" && (
+                        <Check className="h-4 w-4 text-black" />
+                      )}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Button
                   onClick={() => setIsModalOpen(true)}
                   className="bg-success hover:bg-success text-white font-bold flex items-center gap-1"
