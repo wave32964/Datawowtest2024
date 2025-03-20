@@ -41,6 +41,8 @@ export default function OurBlogPage() {
   const [selectedPost, setSelectedPost] = useState<(typeof posts)[0] | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState<string>(""); // State to hold the search term
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]); // Add comments state
@@ -69,6 +71,26 @@ export default function OurBlogPage() {
   const OnCommentSuccess = () =>{
     console.log("Comment Success")
   }
+
+  const filteredPosts = posts.filter((post) => {
+    // Check if the search term is at least 2 characters
+    
+    const isMatchingSearch =
+      searchTerm.length >= 2
+        ? post.title.toLowerCase().includes(searchTerm.toLowerCase())
+        : true; // If searchTerm is too short, return all posts
+  
+    // Check if the category is selected
+    const isMatchingCategory =
+      selectedCategory && selectedCategory !== "" 
+        ? selectedCategory === "Others" // If "Other" is selected, exclude posts with category "Other"
+          ? post.category.toLowerCase() !== "others"  // Exclude "Other" category posts
+          : post.category.toLowerCase() === selectedCategory.toLowerCase() // If a category is selected, filter posts by that category
+        : true; // If no category is selected, don't filter by category
+
+    // Return posts that match both search and category (if applicable)
+    return isMatchingSearch && isMatchingCategory;
+  });
 
   // Fetch authentication data
   useEffect(() => {
@@ -203,40 +225,44 @@ export default function OurBlogPage() {
             <div className="relative w-full max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                type="search"
-                onFocus={handleSearchFocus}
-                placeholder="Search"
-                className="pl-10  border-slate-200"
-              />
+  type="search"
+  onFocus={handleSearchFocus}
+  onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm
+  placeholder="Search"
+  className="pl-10 border-slate-200"
+/>
             </div>
             {!(isMobile && isSearchFocused) && (
               <div className="flex items-center gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2">
-                    <h1 className="text-black">Community</h1>
-                    <ChevronDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Food</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Pet</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Health</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Fashion</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Exercise</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-gray-100">
-                      <span>Other</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+      <DropdownMenu>
+  <DropdownMenuTrigger className="flex items-center gap-2">
+    <h1 className="text-black">Community</h1>
+    <ChevronDown className="h-4 w-4" />
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+  <DropdownMenuItem onClick={() => setSelectedCategory("History")} className="hover:bg-gray-100">
+      <span>History</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Food")} className="hover:bg-gray-100">
+      <span>Food</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Pet")} className="hover:bg-gray-100">
+      <span>Pet</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Health")} className="hover:bg-gray-100">
+      <span>Health</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Fashion")} className="hover:bg-gray-100">
+      <span>Fashion</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Exercise")} className="hover:bg-gray-100">
+      <span>Exercise</span>
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => setSelectedCategory("Others")} className="hover:bg-gray-100">
+      <span>Other</span>
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
                 <Button
                   onClick={() => setIsModalOpen(true)}
                   className="bg-success hover:bg-success text-white font-bold flex items-center gap-1"
@@ -250,7 +276,7 @@ export default function OurBlogPage() {
           <BlogPostList
             onDeleteSuccess={onDeleteSuccess}
             onUpdateSuccess={onUpdateSuccess}
-            posts={posts}
+            posts={filteredPosts}
             onPostClick={handlePostClick}
             onCommentSuccess={OnCommentSuccess}
           />

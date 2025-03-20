@@ -60,6 +60,7 @@ export default function HomePage() {
   // Filter posts based on the search term only if the searchTerm is 2 characters or more
   const filteredPosts = posts.filter((post) => {
     // Check if the search term is at least 2 characters
+    
     const isMatchingSearch =
       searchTerm.length >= 2
         ? post.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,7 +73,7 @@ export default function HomePage() {
           ? post.category.toLowerCase() !== "others"  // Exclude "Other" category posts
           : post.category.toLowerCase() === selectedCategory.toLowerCase() // If a category is selected, filter posts by that category
         : true; // If no category is selected, don't filter by category
-  
+
     // Return posts that match both search and category (if applicable)
     return isMatchingSearch && isMatchingCategory;
   });
@@ -230,19 +231,19 @@ export default function HomePage() {
                       className="hover:bg-gray-100"
                       onClick={() => setSelectedCategory("History")}
                     >
-                      <span>Food</span>
+                      <span>History</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="hover:bg-gray-100"
                       onClick={() => setSelectedCategory("Food")}
                     >
-                      <span>Pets</span>
+                      <span>Food</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="hover:bg-gray-100"
                       onClick={() => setSelectedCategory("Pets")}
                     >
-                      <span>Health</span>
+                      <span>Pets</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="hover:bg-gray-100"
