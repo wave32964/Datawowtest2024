@@ -119,7 +119,7 @@ export default function OurBlogPage() {
       if (!isAuthenticated || !username) return; // Exit if not authenticated
 
       try {
-        const response = await fetch(`http://localhost:8080/blogs`);
+        const response = await fetch(`http://localhost:3001/blogs`);
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -167,7 +167,7 @@ export default function OurBlogPage() {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/blogs/comments`, {
+      const response = await fetch(`http://localhost:3001/blogs/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

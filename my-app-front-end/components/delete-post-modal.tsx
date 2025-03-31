@@ -14,7 +14,7 @@ export function DeletePostModal({ isOpen, onClose, onDelete, onDeleteSuccess, it
   const handleDelete = async () => {
     try {
       // Perform delete action
-      const response = await fetch(`http://localhost:8080/blogs/${itemId}`, {
+      const response = await fetch(`http://localhost:3001/blogs/${itemId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

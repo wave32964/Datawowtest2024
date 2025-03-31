@@ -66,7 +66,7 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
       const blogId = parseInt(params.id, 10);
       const fetchBlog = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/blogs/${blogId}`);
+          const response = await fetch(`http://localhost:3001/blogs/${blogId}`);
           if (response.ok) setPost(await response.json());
           else console.error("Failed to fetch blog details");
         } catch (error) {
@@ -82,7 +82,7 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
       const blogId = parseInt(params.id, 10);
       const fetchComments = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/blogs/${blogId}/comments`);
+          const response = await fetch(`http://localhost:3001/blogs/${blogId}/comments`);
           if (!response.ok || response.status === 204) {
             setComments([]);
             return;
@@ -112,7 +112,7 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/blogs/comments`, {
+      const response = await fetch(`http://localhost:3001/blogs/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newComment),

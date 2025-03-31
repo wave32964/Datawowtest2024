@@ -53,7 +53,7 @@ useEffect(() => {
       const fetchComments = async () => {
         try {
   
-          const response = await fetch(`http://localhost:8080/blogs/${post.id}/comments`);
+          const response = await fetch(`http://localhost:3001/blogs/${post.id}/comments`);
           if (!response) {
             console.error("No response received from server.");
             setComments([]);

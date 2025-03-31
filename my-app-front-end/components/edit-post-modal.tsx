@@ -55,7 +55,7 @@ export function EditPostModal({
     try {
       onSubmit(content);
       
-      const response = await fetch(`http://localhost:8080/blogs/${itemId}`, {
+      const response = await fetch(`http://localhost:3001/blogs/${itemId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
