@@ -10,11 +10,11 @@ async function bootstrap() {
     origin: 'http://localhost:3000', // Allow requests from Next.js running on port 3000
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   });
-
+  if (process.argv.includes('setup')) {
   // Get an instance of DatabaseService and call runSQLFile
   const databaseService = app.get(DatabaseService);
   await databaseService.runSQLFile(); // This will run your SQL file on startup
-
+  }
   // NestJS will now listen on port 3001
   await app.listen(3001);
 }

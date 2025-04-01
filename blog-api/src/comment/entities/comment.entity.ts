@@ -5,18 +5,18 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ nullable: true })  // Allowing null values for 'author'
   author!: string;
 
-  @Column()
+  @Column({ nullable: true })  // Allowing null values for 'avatar'
   avatar!: string;
 
-  @Column()
+  @Column({ nullable: true })  // Allowing null values for 'content'
   content!: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true })  // Allowing null values for 'timeago'
   timeago!: string;
 
-  @Column({ name: 'blogid', nullable: true })  // Ensure the column name matches the database
+  @Column({ name: 'blogid', nullable: true })  // Allowing null values for 'blogid'
   blogId!: number;  // Using the correct column name, "blogid" instead of "blogId"
 }

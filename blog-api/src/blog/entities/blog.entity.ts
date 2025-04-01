@@ -9,25 +9,25 @@ export class Blog {
   author: string | null;  // Make it nullable
 
   @Column({ nullable: true, type: 'varchar', length: 255 })
-  avatar: string | null;  // Make it nullable
+  avatar: string | null;  
 
   @Column({ nullable: true, type: 'varchar', length: 100 })
-  category: string | null;  // Make it nullable
+  category: string | null;  
 
   @Column({ nullable: true, type: 'varchar', length: 255 })
-  title: string | null;  // Make it nullable
+  title: string | null;  
 
   @Column({ nullable: true, type: 'text' })
-  excerpt: string | null;  // Make it nullable
+  excerpt: string | null;  
 
   @Column({ nullable: true, type: 'text' })
-  content: string | null;  // Make it nullable
+  content: string | null; 
 
   @Column({ nullable: true, type: 'varchar', length: 255 })
-  comments: string | null;  // Make it nullable
+  comments: string | null; 
 
   @Column({ nullable: true, type: 'varchar', length: 50 })
-  timeago: string | null;  // Make it nullable
+  timeago: string | null;  
 
   constructor(
     author: string | null = null,
