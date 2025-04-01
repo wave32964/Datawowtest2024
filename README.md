@@ -21,6 +21,10 @@ DB_USER=your_username
 DB_PASSWORD=your_password
 DB_NAME=datawowtest2024
 
+# to initial setup db / reset
+cd posts-api
+pnpm run start:setup
+
 # to run app 
 $ cd blog-api
 $ pnpm run start
@@ -35,6 +39,3 @@ pnpm run start
 $ pnpm run dev
 [localhost](http://localhost:3000)
 
-# to initial setup db / reset
-cd posts-api
-pnpm run start:setup
