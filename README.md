@@ -1,5 +1,5 @@
 # Datawowtest2024
---go as backend
+--nestjs as backend
 --nextjs frontednd framework
 --postgresql as db
 # set up postgresql
