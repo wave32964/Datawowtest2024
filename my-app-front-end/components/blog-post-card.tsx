@@ -11,7 +11,7 @@ import { useState,useEffect} from "react";
 import { Comment } from "@/app/types/type";
 interface BlogPostCardProps {
   post: {
-    id: number;
+    id?: number;
     author: string;
     avatar: string;
     category: string;

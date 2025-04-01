@@ -138,7 +138,7 @@ export default function OurBlogPage() {
     fetchPosts();
   }, [isAuthenticated, username, shouldRefetch]); // Re-run when these change
 
-  const handlePostClick = (postId: number) => {
+  const handlePostClick = (postId?: number) => {
     if (isMobile) {
       const post = posts.find((p) => p.id === postId);
       setSelectedPost(post || null);

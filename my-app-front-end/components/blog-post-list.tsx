@@ -3,7 +3,7 @@ import BlogPostCard from "./blog-post-card";
 
 interface BlogPostListProps {
   posts: {
-    id: number;
+    id?: number;
     author: string;
     avatar: string;
     category: string;
@@ -13,7 +13,7 @@ interface BlogPostListProps {
     comments: number;
     timeAgo: string
   }[];
-  onPostClick: (postId: number) => void;
+  onPostClick: (postId?: number) => void;
   onDeleteSuccess?: () => void; // Callback when a post is deleted
   onUpdateSuccess?: () => void; // Callback when a post is updated
   onCommentSuccess?: () => void;  // Add onCommentSuccess prop

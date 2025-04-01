@@ -33,7 +33,7 @@ import {
 } from "lucide-react";
 import { useMediaQuery } from "./hook/use-mobile";
 import { CreatePostModal } from "@/components/create-post-modal";
-import { createBlog, Blog, getBlogs } from "@/utils/api"; // Import getBlogs to fetch posts
+import { createBlog, Blog, getBlogs,CreateBlog } from "@/utils/api"; // Import getBlogs to fetch posts
 
 export default function HomePage() {
   const router = useRouter();
@@ -112,7 +112,7 @@ export default function HomePage() {
     fetchBlogs(); // Call the function to fetch the blogs
   }, []);
 
-  const handlePostClick = (postId: number) => {
+  const handlePostClick = (postId?: number) => {
     // if (isMobile) {
     //   // When on mobile, we can set the selected post based on its id
     //   const post = posts.find((p) => p.id === postId); // Find the full post object based on the id
@@ -125,48 +125,48 @@ export default function HomePage() {
     console.log("Comment Success");
   };
 
-  const handlePostComment = async () => {
-    if (!comment.trim() || !selectedPost) return; // Don't post empty comments or if no post is selected
+  // const handlePostComment = async () => {
+  //   if (!comment.trim() || !selectedPost) return; // Don't post empty comments or if no post is selected
 
-    const username = localStorage.getItem("username");
-    const avatar = "https://example.com/avatar.jpg"; // Replace with actual avatar URL if available
+  //   const username = localStorage.getItem("username");
+  //   const avatar = "https://example.com/avatar.jpg"; // Replace with actual avatar URL if available
 
-    if (!username) {
-      console.error("User is not logged in");
-      return;
-    }
+  //   if (!username) {
+  //     console.error("User is not logged in");
+  //     return;
+  //   }
 
-    const newComment = {
-      blog_id: selectedPost.id, // Use the selected post's ID
-      author: username,
-      avatar: avatar,
-      content: comment,
-      timeAgo: "Just now", // This can be updated on the backend
-    };
+  //   const newComment = {
+  //     blog_id: selectedPost.id, // Use the selected post's ID
+  //     author: username,
+  //     avatar: avatar,
+  //     content: comment,
+  //     timeAgo: "Just now", // This can be updated on the backend
+  //   };
 
-    try {
-      const response = await fetch(`http://localhost:8080/blogs/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newComment),
-      });
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/blogs/comments`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(newComment),
+  //     });
 
-      if (response.ok) {
-        const createdComment = await response.json();
-        setComments((prevComments) => [createdComment, ...prevComments]); // Add new comment to state
-        setComment(""); // Clear the input field
-        setSelectedPost(null);
-        OnCommentSuccess();
-      } else {
-        console.error("Failed to post comment");
-      }
-    } catch (error) {
-      console.error("Error posting comment:", error);
-    }
-  };
-  const handlePostCreation = (newPost: Blog) => {
+  //     if (response.ok) {
+  //       const createdComment = await response.json();
+  //       setComments((prevComments) => [createdComment, ...prevComments]); // Add new comment to state
+  //       setComment(""); // Clear the input field
+  //       setSelectedPost(null);
+  //       OnCommentSuccess();
+  //     } else {
+  //       console.error("Failed to post comment");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error posting comment:", error);
+  //   }
+  // };
+  const handlePostCreation = (newPost: CreateBlog) => {
     // Update posts state with the new post to trigger re-render
     setPosts((prevPosts) => [...prevPosts, newPost]);
   };
@@ -339,7 +339,7 @@ export default function HomePage() {
                       Cancel
                     </Button>
                     <Button
-                      onClick={handlePostComment}
+                      // onClick={handlePostComment}
                       className="flex-1 bg-[#5a9e6f] hover:bg-[#4a8e5f] text-white"
                     >
                       Post

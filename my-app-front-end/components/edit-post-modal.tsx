@@ -12,7 +12,7 @@ interface EditPostModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (content: string) => void
-  itemId: number
+  itemId?: number
   post: Post
   onUpdateSuccess?: () => void
 }

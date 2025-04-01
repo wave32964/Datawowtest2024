@@ -112,7 +112,7 @@ export default function PostDetail({ params: paramsPromise }: PostDetailProps) {
     };
 
     try {
-      const response = await fetch(`http://localhost:3001/blogs/comments`, {
+      const response = await fetch(`http://localhost:3001/blogs/${params.id}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newComment),

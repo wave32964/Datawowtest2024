@@ -1,5 +1,5 @@
 export interface Post {
-    id: number
+    id?: number
     author: string
     avatar: string
     category: string
@@ -11,7 +11,7 @@ export interface Post {
   }
 
   export interface Comment {
-    id: number;
+    id?: number;
     blog_id: number;
     author: string;
     avatar: string;

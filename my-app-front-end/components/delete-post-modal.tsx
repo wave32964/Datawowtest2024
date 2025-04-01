@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 
 interface DeletePostModalProps {
   isOpen: boolean
-  itemId: number
+  itemId?: number
   onClose: () => void
   onDeleteSuccess?: () => void
   onDelete: () => void
