@@ -35,6 +35,6 @@ pnpm run start
 $ pnpm run dev
 [localhost](http://localhost:3000)
 
-# to setup db
+# to initial setup db / reset
 cd posts-api
 pnpm run start:setup
